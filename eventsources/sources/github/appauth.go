@@ -14,21 +14,31 @@ limitations under the License.
 package github
 
 import (
-	"net/http"
-
 	"github.com/bradleyfalzon/ghinstallation/v2"
+	"net/http"
 )
 
 type AppsAuthStrategy struct {
 	AppID          int64
 	InstallationID int64
 	PrivateKey     string
+	GithubBaseURL  string
 	Transport      http.RoundTripper
 }
 
 // AuthTransport implements the AuthStrategy interface.
 func (t *AppsAuthStrategy) AuthTransport() (http.RoundTripper, error) {
-	return ghinstallation.New(t.transport(), t.AppID, t.InstallationID, []byte(t.PrivateKey))
+	ght, e := ghinstallation.New(t.transport(), t.AppID, t.InstallationID, []byte(t.PrivateKey))
+
+	if e != nil {
+		return nil, e
+	}
+
+	if len(t.GithubBaseURL) > 0 {
+		ght.BaseURL = t.GithubBaseURL
+	}
+
+	return ght, nil
 }
 
 func (t *AppsAuthStrategy) transport() http.RoundTripper {

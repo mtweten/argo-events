@@ -91,6 +91,7 @@ func (router *Router) getGithubAppAuthStrategy() (*AppsAuthStrategy, error) {
 		AppID:          appCreds.AppID,
 		InstallationID: appCreds.InstallationID,
 		PrivateKey:     githubAppPrivateKey.secret,
+		GithubBaseURL:  router.githubEventSource.GithubBaseURL,
 	}, nil
 }
 
